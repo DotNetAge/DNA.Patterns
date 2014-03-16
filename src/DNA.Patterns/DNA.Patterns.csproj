@@ -11,6 +11,7 @@
     <AssemblyName>DNA.Patterns</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\DNA.Patterns.XML</DocumentationFile>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,6 +31,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>sign.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -40,12 +49,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\CommandManifestBase.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\CommandBase.cs" />
+    <Compile Include="Commands\CommandFilterCollection.cs" />
+    <Compile Include="Commands\Invokers\CommandStack.cs" />
+    <Compile Include="Commands\Invokers\CommandTable.cs" />
+    <Compile Include="Commands\ICanUndo.cs" />
     <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommandFilter.cs" />
     <Compile Include="Commands\ICommandManifest.cs" />
-    <Compile Include="Commands\ParallelCommandManifestBase.cs" />
-    <Compile Include="Commands\SequenceCommandManifestBase.cs" />
+    <Compile Include="Commands\Invokers\Marco.cs" />
+    <Compile Include="Commands\Invokers\TranscationStates.cs" />
+    <Compile Include="Commands\Invokers\Transaction.cs" />
+    <Compile Include="Commands\Invokers\TranscationContext.cs" />
     <Compile Include="Data\IConfiguration.cs" />
     <Compile Include="Data\IQueues.cs" />
     <Compile Include="Data\IRepository.cs" />
@@ -54,12 +70,16 @@
     <Compile Include="Events\IEventAggregator.cs" />
     <Compile Include="Events\IObserver.cs" />
     <Compile Include="Events\ObserverBase.cs" />
+    <Compile Include="IErrorHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tasks\CommandTask.cs" />
     <Compile Include="Tasks\ICommandTask.cs" />
     <Compile Include="Tasks\ITask.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="changelogs.md" />
+    <None Include="sign.pfx" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

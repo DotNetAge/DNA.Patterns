@@ -1,68 +1,90 @@
-﻿//  Copyright (c) 2011 Ray Liang (http://www.dotnetage.com)
-//  Licensed MIT: http://www.opensource.org/licenses/mit-license.php
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-using System;
-
-namespace DNA.Patterns
+namespace DNA.Patterns.Commands
 {
-    /// <summary>
-    /// Reparents the command base class
-    /// </summary>
-    public abstract class Command<T> : ICommand
-        where T : ICommandContext
+    public class Command<TReceiver> : CommandBase<TReceiver>, ICanUndo, IErrorHandler
+    where TReceiver : class
     {
-        /// <summary>
-        /// Identity this command is thread safe
-        /// </summary>
-        public virtual bool IsThreadSafe { get { return true; } }
-
-        /// <summary>
-        /// Gets the command execute order
-        /// </summary>
-        /// <remarks>
-        /// This property only avaliable in command sequence mode. 
-        /// </remarks>
-        public virtual int Order { get { return 0; } }
-
-        /// <summary>
-        /// Execute the command.
-        /// </summary>
-        /// <param name="context">The command execution context object.</param>
-        public abstract void Execute(T context);
-
-        /// <summary>
-        /// Process the exception during command executing.
-        /// </summary>
-        /// <param name="exception"></param>
-        protected virtual void OnError(Exception exception) { }
-
-        #region Implement ICommandContext
-
-        void ICommand.Execute(ICommandContext context)
+        public Command() : base() { }
+        
+        public Command(Action executionHandler)
         {
-            this.Execute((T)context);
+            this.Receiver = null;
+            this.ExecutionHandler = new Action<object>((o) => { executionHandler.Invoke(); });
         }
 
-        void ICommand.OnError(Exception exception)
+        public Command(TReceiver receiver) : base(receiver) { }
+
+        public Command(Action<object> executionHandler)
+            : base()
         {
-            this.OnError(exception);
+            this.ExecutionHandler = executionHandler;
         }
 
-        bool ICommand.IsThreadSafe
+        public Command(Action<object> executionHandler, Action<Exception> errorHandler)
+            : this(executionHandler)
         {
-            get { return this.IsThreadSafe; }
+            this.ErrorHandler = errorHandler;
         }
 
-        int ICommand.Order
+        public override void Execute(object parameters = null)
         {
-            get { return this.Order; }
+            if (ExecutionHandler == null)
+                this.OnExecute(parameters);
+            else
+                this.ExecutionHandler(parameters);
         }
 
-        #endregion
+        public virtual void Undo() { }
+
+        public void HandleError(Exception e)
+        {
+            if (ErrorHandler == null)
+                this.OnError(e);
+            else
+                this.ErrorHandler(e);
+        }
+
+        public Action<object> ExecutionHandler { get; set; }
+
+        public Action<Exception> ErrorHandler { get; set; }
+
+        protected virtual void OnError(Exception e) { }
+
+        protected virtual void OnExecute(object parameters = null) { }
+
+
+        void ICanUndo.Undo()
+        {
+            this.Undo();
+        }
+
+        void IErrorHandler.OnError(Exception e)
+        {
+            this.OnError(e);
+        }
     }
 
-    /// <summary>
-    /// Parents a common command base class.
-    /// </summary>
-    public abstract class Command : Command<CommandContext> { }
+    public class Command : Command<object>
+    {
+        public Command() : base() { }
+
+        public Command(object receiver) : base(receiver) { }
+        
+        public Command(Action executionHandler):base(executionHandler) {  }
+
+        public Command(Action<object> executionHandler)
+            : base()
+        {
+            this.ExecutionHandler = executionHandler;
+        }
+
+        public Command(Action<object> executionHandler, Action<Exception> errorHandler)
+            : base( executionHandler)
+        {
+        }
+    }
 }

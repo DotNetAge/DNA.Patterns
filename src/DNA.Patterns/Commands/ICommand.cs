@@ -17,18 +17,19 @@ namespace DNA.Patterns.Commands
         /// <remarks>
         /// This object can be used to store the additional parameters on executing.
         /// </remarks>
+        [Obsolete("Use execute input parameters object to instead.")]
         IDictionary<string, Object> Data { get; set; }
 
         /// <summary>
         /// Execute a command 
         /// </summary>
-        void Execute();
+        void Execute(object parameters = null);
 
-        /// <summary>
-        /// Throw and exception on command execution.
-        /// </summary>
-        /// <param name="exception">The exception object</param>
-        void OnError(Exception exception);
+        ///// <summary>
+        ///// Throw and exception on command execution.
+        ///// </summary>
+        ///// <param name="exception">The exception object</param>
+        //void OnError(Exception exception);
     }
 
     /// <summary>

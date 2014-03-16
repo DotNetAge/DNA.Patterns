@@ -12,7 +12,7 @@ namespace DNA.Patterns.Commands
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public abstract class ParallelCommandManifestBase<T> : CommandManifestBase<T>
-        where T : ICommand
+        where T : Command
     {
         public override void Invoke(IEnumerable<T> filteredCommands)
         {
@@ -27,7 +27,7 @@ namespace DNA.Patterns.Commands
                         catch (Exception e)
                         {
                             if (cmd != null)
-                                cmd.OnError(e);
+                                cmd.HandleError(e);
                             OnCommandError(e, cmd);
                         }
                     });

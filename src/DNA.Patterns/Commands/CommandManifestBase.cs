@@ -10,8 +10,9 @@ namespace DNA.Patterns.Commands
     /// <summary>
     /// The base class for command manifest
     /// </summary>
-    public abstract class CommandManifestBase<T> : ICommandManifest,ICommand
-        where T : ICommand
+    [Obsolete("Please use Macro to instead.")]
+    public abstract class CommandManifestBase<T> : ICommandManifest, ICommand
+        where T : Command
     {
         /// <summary>
         /// Gets commands
@@ -83,7 +84,7 @@ namespace DNA.Patterns.Commands
 
         IEnumerable<ICommand> ICommandManifest.Commands
         {
-            get { return this.Commands.Select(c=>(ICommand)c); }
+            get { return this.Commands.Select(c => (ICommand)c); }
         }
 
         IEnumerable<ICommandFilter> ICommandManifest.Filters
@@ -97,7 +98,7 @@ namespace DNA.Patterns.Commands
         }
 
         public IDictionary<String, Object> Data { get; set; }
-        
+
         IDictionary<string, object> ICommand.Data
         {
             get
@@ -110,14 +111,9 @@ namespace DNA.Patterns.Commands
             }
         }
 
-        void ICommand.Execute()
+        void ICommand.Execute(object parameters)
         {
-            this.Invoke();
-        }
-
-        void ICommand.OnError(Exception exception)
-        {
-            throw exception;
+            throw new NotImplementedException();
         }
     }
 }
